@@ -10,7 +10,7 @@
 
 # Motivation 
 
-# Image Preprocessing for low transmission amount
+# Image Preprocessing for reducing transmission amount
 임베디드 디바이스에서 쉽게 구현 및 적은 계산량, 적은 에너지 소모가 필수적이다.
 preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortion metric과 같이)
 
