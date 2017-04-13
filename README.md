@@ -31,13 +31,13 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
             * 출처 : http://darkpgmr.tistory.com/117 [다크 프로그래머]
             * 출처 : http://tech-algorithm.com/articles/bilinear-image-scaling/
         * 출처에 있는 내용들 조금 이야기
-        * 간단한 Psuedo code box 필요할지 모르겠지만 10~14줄 정도입니다
+        * 간단한 Psuedo code box 필요할지 모르겠지만 10~14줄 정도
 * Image Color Quantization
     * Color Quantization은 원본 이미지의 256색을 모두 사용하는 것이 아닌 일정 수의 표현 가능한 픽셀 수로 줄여서 사용하는 것이다.
     * Color Quantization의 방법에는 "straight-line distance", "nearest color" algorithm,[위키피디아] K-means[교수님 논문, Celebi, M. E. (2011). "Improving the performance of k-means for color quantization". Image and Vision Computing. 29 (4): 260–271. doi:10.1016/j.imavis.2010.10.002.] 방식 등이 있다.
     * 원본 이미지로 Training한  Conv 모델을 사용할 경우에는 낮은 Distortion(SSIM, PSNR Metric 상)을 유발하는 Algorithm이 좋은 Accuracy result를 줄 수 있겠지만, Training도 Color Quantization한 이미지를 사용할 경우 낮은 Distortion이 크게 문제가 되지 않을 것이다. 그래서 여러번의 iteration을 거치는 것 또는 Pixel간의 euclidean distance 등을 계산하는 것이 아닌 정해진 Color pixel을 고정해서 Quantization을 수행한다. 이로인해 더 적은 연산을 통해 Color Quantization을 할 수 있다.
     * 정해진 Color Pixel 구하는, 
-    * 이미지에 Color Quantization하는 psuedo code box (5~6줄 정도입니다.)
+    * 이미지에 Color Quantization하는 psuedo code box (5~6줄 정도)
     * Color Quantization 후 이미지의 사이즈(bytes) 계산 식
         * log(2)(# of Colors) * # of pixel
 
@@ -77,18 +77,25 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 
 **Image Augmentation 후 8, 16 Color의 경우 Accuracy가 상승했지만 256, 32의 경우에는 Accuracy가 크게 떨어졌습니다. 이 두 경우에 Augmentation을 하지 않고 한 것이 결과가 좋게나왔다는 것과 두 경우에 추후에 Evaluation 결과를 작성할 때 Augmentaion을 하지 않은 모델을 사용했다는 것을 명시하는게 좋을까요? '이 두 경우는 Augmentation안하는게 좋아.' 라고 말하는게 마음에 안들어서요.**
 
+두 가지 경우에 대해서 Training을 해 봄.
+1. 원본 이미지를 사용해서 Training 후 Validation을 Color Quantization, Resized된 이미지를 사용함.
+    * 256, 32의 경우 높은 Accuracy를 보이지만 16, 8에서 낮은 Accuracy를 보임
+2. k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k Color Quantization, Resized된 이미지를 사용함.
+    * 각 경우에 따라 비슷한 Accuracy를 보이지만 Image resized된 Validation Set에 대해 Accuracy가 급격히 낮아짐. (Quantization 후 resize한 이미지를 Validation으로 사용해서 그럴 수도..?)
+
 # Evaluation
 1. 전송량 대비 Image Classification Accuracy
     * Validation 이미지 개수 및 설명
     * [표] Confusion Matrix
     * [그래프] Class 별 Accuracy
+    * 그래프 형식은 아래와 같이
 
     ![color32](readme_img/32color.png)
     ![color32](readme_img/32color2.png)
     * 분류 정확도를 떨어뜨리는 요인 중 하나는 청소년새들!
     * 아직 명확화하지는 않았지만 시계열 정보를 사용하면 더 좋아질 수 있다고 생각합니다.. 전개내용이 약하면 추가하는 것이 맞다고 생각합니다.
     * 또는 '청소년새' 클래스를 하나 더 만드는 방법도 있는데 어디부터가 청소년인지 정하기가 애매해서 못했습니다. 이 경우 확실히 전체 정확도가 올라갈 것입니다.
-    
+
 참고사항) Child Class
 
 ![child1](readme_img/child1.bmp)
@@ -98,6 +105,7 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 위 3개의 이미지가 같은 클래스로 분류되어있음. -> '새' 클래스의 경우 완전한 성조가 있는 경우
 
 2. 전송량 대비 Image Distortion Metric (SSIM, PSNR, MSE)
+    * 그래프 형식은 아래와 같이
 
     ![ssim](readme_img/ssim.png)
     ![psnr](readme_img/psnr.png)
