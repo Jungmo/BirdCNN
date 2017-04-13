@@ -120,3 +120,33 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 # Related work
 
 # conclustion
+
+
+
+
+
+# Classification Result
+
+![accu8](readme_img/entire/Accuracy_8.png)
+![accu8](readme_img/entire/Accuracy_16.png)
+![accu8](readme_img/entire/Accuracy_32.png)
+![accu8](readme_img/entire/Accuracy_256.png)
+
+![accu8](readme_img/each/Accuracy_8.png)
+![accu8](readme_img/each/Accuracy_16.png)
+![accu8](readme_img/each/Accuracy_32.png)
+![accu8](readme_img/each/Accuracy_256.png)
+
+
+
+**위에서 언급한 것 처럼 Image Augmentation을 하지 않을 경우 + 원본 이미지로 학습한 경우**
+
+![accu8](readme_img/entire_raw/Accuracy_8.png)
+![accu8](readme_img/entire_raw/Accuracy_16.png)
+![accu8](readme_img/entire_raw/Accuracy_32.png)
+![accu8](readme_img/entire_raw/Accuracy_256.png)
+
+![accu8](readme_img/each_raw/Accuracy_8.png)
+![accu8](readme_img/each_raw/Accuracy_16.png)
+![accu8](readme_img/each_raw/Accuracy_32.png)
+![accu8](readme_img/each_raw/Accuracy_256.png)
