@@ -124,6 +124,10 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 
 # Classification Result
 
+원본 이미지를 사용해서 Training 후 Validation을 Color Quantization, Resized된 이미지를 사용함.
+
+16, 8의 경우 결과가 잘 나오지않지만 resize된 이미지 셋에 대해서 정확도가 크게 떨어지지 않음.
+
 ![accu8](readme_img/entire/Accuracy_8.png)
 ![accu8](readme_img/entire/Accuracy_16.png)
 ![accu8](readme_img/entire/Accuracy_32.png)
@@ -136,7 +140,9 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 
 
 
-**위에서 언급한 것 처럼 Image Augmentation을 하지 않을 경우 + 원본 이미지로 학습한 경우**
+k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k Color Quantization, Resized된 이미지를 사용함.
+
+16, 8의 경우 새, 빈둥지 검출 능력이 좋아서 전체 Accuracy가 높게 나오는 경향이 있음.
 
 ![accu8](readme_img/entire_raw/Accuracy_8.png)
 ![accu8](readme_img/entire_raw/Accuracy_16.png)
