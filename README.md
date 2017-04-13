@@ -2,11 +2,12 @@
 
 * 딥러닝의 발전함에 따라 이미지 분류 도메인의 주도권은 traditional 머신 러닝 알고리즘 (SVM, Linear Classifier)에서 ConvNN으로 주도권이 넘어감.
 * ConvNN을 실생활에 적용하기 위해서 의미있고 실용적인 이미지를 수집하는 것이 필요함
+* 또 실제 모델을 Deploy하는 시나리오도 필요함
 * 이미지를 수집하는 것에는 Wireless Image Sensor Networks (WISN)가 하나의 해결책이 될 수 있음
 * 하지만 WISN 상에서 멀티미디어 데이터를 전송하는 것은 데이터소모가 크기 때문에 원본 이미지를 전송하는 것은 에너지 비효율적임
 * 이 문제를 해결하기위해 Image resize와 Color Quantization을 사용하려고 함.
 * 중요한 Contribution은 WISN 상의 노드가 원본 이미지를 전송하지 않고 Quality를 감소시켜도 ConvNN 결과에 크게 영향을 미치지 않는 것을 보여주는 것
-* 전송량 측면에서 50% 이하로의 전송량 감소, 85% 이상 의 분류 정확도, ~%의 에너지 감소를 보임을 알아냄.
+* 전송량 측면에서 50% 이하로의 전송량 감소, 최대 93% 이상 의 분류 정확도, ~%의 에너지 감소를 보임을 알아냄.
 
 # Motivation or Challenge
 
@@ -73,6 +74,8 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 1. 전송량 대비 Image Classification Accuracy
     * [표] Confusion Matrix
     * [그래프] Class 별 Accuracy
+    * 분류 정확도를 떨어뜨리는 요인 중 하나는 청소년새들!
+    * 아직 명확화하지는 않았지만 시계열 정보를 사용하면 더 좋아질 수 있다고 생각합니다.. 전개내용이 약하면 추가하는 것이 맞다고 생각합니다.
 2. 전송량 대비 Image Distortion Metric (SSIM, PSNR, MSE)
     * [그래프]
 3. Energy Consumption
@@ -82,4 +85,5 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     * [표]
 
 # Related work
+
 # conclustion
