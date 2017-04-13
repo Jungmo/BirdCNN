@@ -6,33 +6,38 @@
 * 이미지를 수집하는 것에는 Wireless Image Sensor Networks (WISN)가 하나의 해결책이 될 수 있음
 * 하지만 WISN 상에서 멀티미디어 데이터를 전송하는 것은 데이터소모가 크기 때문에 원본 이미지를 전송하는 것은 에너지 비효율적임
 * 이 문제를 해결하기위해 Image resize와 Color Quantization을 사용하려고 함.
-* 중요한 Contribution은 WISN 상의 노드가 원본 이미지를 전송하지 않고 Quality를 감소시켜도 ConvNN 결과에 크게 영향을 미치지 않는 것을 보여주는 것
+* 중요한 Contribution은 WISN 상의 노드가 원본 이미지를 전송하지 않고 Quality를 감소시켜도 ConvNN 결과에 크게 영향을 미치지 않고 충분하다는 것
 * 전송량 측면에서 50% 이하로의 전송량 감소, 최대 93% 이상 의 분류 정확도, ~%의 에너지 감소를 보임을 알아냄.
 
 # Motivation or Challenge
-
+이미지셋 설명
 이미지를 새, 새끼새, 알, 빈둥지로 클래스를 나눈다. 새의 종류 2개, 새끼새, 알, 빈둥지의 여려가지 이미지 첨부
-이 때 새의 종류가 2개 인 점, 새끼새의 경우 청소년새가 포함되어 있는 점, 알이 둥지 밑에 숨어있는 점 등을 제시한다. -> traditional ML알고리즘 사용이 힘든 이유
+이 때 새의 종류가 2개 인 점, 새끼새의 경우 청소년새가 포함되어 있는 점, 알이 둥지 밑에 숨어있는 점 등을 제시한다. -> traditional ML알고리즘 사용 결과 좋지 않았던 것과 사용이 힘든 이유
+
 
 # Image Preprocessing for reducing transmission amount
 임베디드 디바이스에서 쉽게 구현 및 적은 계산량, 적은 에너지 소모가 필수적이다.
+
 preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortion metric과 같이)
 
 * Previous Approach
     * Find ROI and Crop
         * 임베디드 디바이스가 ROI를 잘 찾아서 ROI만 전송할 수 있다면 Traditional Image classifier에서는 잘 동작할 수 있다. 하지만 ROI 검출은 SIFT, SURF 등의 복잡한 알고리즘이 필요하다. 또는 시계열 이미지에서 이전 이미지와 현재 이미지간의 차이를 통해 변화한 부분을 ROI로 사용하는 방법도 있다. 그러나 원본 이미지가 grayscale 단채널이어서 색상정보가 부족하다는 점, 그에 따른 Pixel histogram이 각 Class마다 차이가 많이 나지않아 classification accuracy가 상당히 낮게 나온다.
         * ConvNN의 경우 학습된 데이터에 따라서 Validation이 진행되는데 학습시키는 과정에서 ROI를 추출해서 학습시키기가 어려운 점, ConvNN의 경우 완벽하게 잘리지 않은 이미지에 대해서 검출이 어려운 점 때문에 ROI Crop 방법은 적절하지 않다. 그래서 이미지의 전체 크기를 줄이기로 함.
+        * 이 경우 픽셀정보는 바뀌겠지만 수정된 사진에 원본이미지의 내용이 모두 들어가게됨 - ConvNN에 적합
 * Image Scaling
-    * Bilinear Image Scaling(이선형 보간법)
+    * Bilinear Image Scaling(이중선형 보간법)
         * Interpolation(인터폴레이션, 보간)이란 알려진 지점의 값 사이(중간)에 위치한 값을 알려진 값으로부터 추정하는 것을 말한다.
             * 출처 : http://darkpgmr.tistory.com/117 [다크 프로그래머]
             * 출처 : http://tech-algorithm.com/articles/bilinear-image-scaling/
-        * 간단한 Psuedo code box
+        * 출처에 있는 내용들 조금 이야기
+        * 간단한 Psuedo code box 필요할지 모르겠지만 10~14줄 정도입니다
 * Image Color Quantization
     * Color Quantization은 원본 이미지의 256색을 모두 사용하는 것이 아닌 일정 수의 표현 가능한 픽셀 수로 줄여서 사용하는 것이다.
     * Color Quantization의 방법에는 "straight-line distance", "nearest color" algorithm,[위키피디아] K-means[교수님 논문, Celebi, M. E. (2011). "Improving the performance of k-means for color quantization". Image and Vision Computing. 29 (4): 260–271. doi:10.1016/j.imavis.2010.10.002.] 방식 등이 있다.
     * 원본 이미지로 Training한  Conv 모델을 사용할 경우에는 낮은 Distortion(SSIM, PSNR Metric 상)을 유발하는 Algorithm이 좋은 Accuracy result를 줄 수 있겠지만, Training도 Color Quantization한 이미지를 사용할 경우 낮은 Distortion이 크게 문제가 되지 않을 것이다. 그래서 여러번의 iteration을 거치는 것 또는 Pixel간의 euclidean distance 등을 계산하는 것이 아닌 정해진 Color pixel을 고정해서 Quantization을 수행한다. 이로인해 더 적은 연산을 통해 Color Quantization을 할 수 있다.
-    * 정해진 Color Pixel 구하는 psuedo code box
+    * 정해진 Color Pixel 구하는, 
+    * 이미지에 Color Quantization하는 psuedo code box (5~6줄 정도입니다.)
     * Color Quantization 후 이미지의 사이즈(bytes) 계산 식
         * log(2)(# of Colors) * # of pixel
 
@@ -74,6 +79,7 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 
 # Evaluation
 1. 전송량 대비 Image Classification Accuracy
+    * Validation 이미지 개수 및 설명
     * [표] Confusion Matrix
     * [그래프] Class 별 Accuracy
 
@@ -81,6 +87,15 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     ![color32](readme_img/32color2.png)
     * 분류 정확도를 떨어뜨리는 요인 중 하나는 청소년새들!
     * 아직 명확화하지는 않았지만 시계열 정보를 사용하면 더 좋아질 수 있다고 생각합니다.. 전개내용이 약하면 추가하는 것이 맞다고 생각합니다.
+
+참고사항) Child Class
+
+![child1](readme_img/child1.bmp)
+![child2](readme_img/child2.bmp)
+![child3](readme_img/child3.bmp)
+
+위 3개의 이미지가 같은 클래스로 분류되어있음. -> '새' 클래스의 경우 완전한 성조가 있는 경우
+
 2. 전송량 대비 Image Distortion Metric (SSIM, PSNR, MSE)
 
     ![ssim](readme_img/ssim.png)
