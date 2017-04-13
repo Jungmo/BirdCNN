@@ -58,11 +58,14 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 |200|200|38%|50%|63%|100%|
 
 # Image Classification Using ConvNN
+
 ## Training model
-* 사용한 툴(Caffe), 사용한 모델(GoogleNet), 모델 파라미터??(Deep Learning을 중심적으로 발표하는 학회에서는 재현성을 위해 파라미터를 공개한다고 합니다. 근데 파라미터가 Optimal한 지에 대해 자신이 없네요.. 제 생각엔 Deep learning이 중심이 아닌 것 같아 자세하게 안해도 될 것 같습니다.)
-* Image Augmentation
-    * 새, 빈둥지의 사진은 상대적으로 많을 수 밖에 없다. 그래서 알, 새끼새의 경우 많은 Image Augmentation을 통해 이미지 bias를 해결한다.
-    * 새 사진도 2가자의 종(species) 중 Bluebird 이미지의 수가 2배 정도 적다.
+
+* 사용한 툴(Caffe), 사용한 모델(GoogleNet), 모델 파라미터??(Deep Learning을 중심적으로하는 학회에서는 재현성을 위해 파라미터를 공개한다고 합니다. 근데 파라미터가 Optimal한 지에 대해 자신이 없네요.. 제 생각엔 새로운 Deep learning 알고리즘이 중심이 아닌 것 같아 자세하게 안해도 될 것 같습니다.)
+### Image Augmentation
+* 새, 빈둥지의 사진은 상대적으로 많을 수 밖에 없다. 그래서 알, 새끼새의 경우 많은 Image Augmentation을 통해 이미지 bias를 해결한다.
+* 새 사진도 2가자의 종(species) 중 Bluebird 이미지의 수가 2배 정도 적다.
+* Image Augmentation을 많이 한 경우
     * Bluebird -> 3배 (blur, filp)
     * Swallow -> 2배 (filp)
     * Egg -> 10배
@@ -72,15 +75,22 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     * Child -> 9배
         * Crop(1,2,3,4사분면, 가운데를 150 * 150으로 자르고 200 * 200으로 리사이즈)
         * Vertical, Horizontal, vertical&horizontal
+* Image Augmentation을 적게 한 경우
+    * Bluebird -> 2배 (filp)
+    * Swallow -> 1배
+    * Egg -> 4배
+        * Vertical, Horizontal, vertical&horizontal        
+    * Child -> 4배
+        * Vertical, Horizontal, vertical&horizontal
 
 [표] training 이미지 개수와 augmentation 후의 개수
 
-**Image Augmentation 후 8, 16 Color의 경우 Accuracy가 상승했지만 256, 32의 경우에는 Accuracy가 크게 떨어졌습니다. 이 두 경우(32, 256 colors)에  대해 Augmentation을 하지 않고 한 것이 결과가 좋게나왔다는 것과 두 경우에 추후에 Evaluation 결과를 작성할 때 Augmentaion을 하지 않은 모델을 사용했다는 것을 명시하는게 좋을까요? '이 두 경우는 Augmentation안하는게 좋아.' 라고 말하는게 조금 이상할 것 같습니다.**
+**Image Augmentation을 많이 한 경우에 8, 16 Color의 경우 Accuracy가 상승했지만 256, 32의 경우에는 Accuracy가 크게 떨어졌습니다. 또 Resize되었을 때 Accuracy가 크게 떨어집니다.**
 
-두 가지 경우에 대해서 Training을 해 봄.
-1. 원본 이미지를 사용해서 Training 후 Validation을 Color Quantization, Resized된 이미지를 사용함.
+## 두 가지 경우에 대해서 Training을 해 봄.
+1. 원본 이미지를 사용해서 Training 후 Validation을 Color Quantization, Resized된 이미지를 사용함.(적은 Augmentation)
     * 256, 32의 경우 높은 Accuracy를 보이지만 16, 8에서 낮은 Accuracy를 보임
-2. k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k Color Quantization, Resized된 이미지를 사용함.
+2. k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k Color Quantization, Resized된 이미지를 사용함. (많은 Augmentaion)
     * 각 경우에 따라 비슷한 Accuracy를 보이지만 Image resized된 Validation Set에 대해 Accuracy가 급격히 낮아짐. (Quantization 후 resize한 이미지를 Validation으로 사용해서 그럴 수도..?)
 
 # Evaluation
@@ -125,9 +135,13 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 
 # Classification Result
 
-원본 이미지를 사용해서 Training 후 Validation을 Color Quantization, Resized된 이미지를 사용함.
+---
 
-16, 8의 경우 결과가 잘 나오지않지만 resize된 이미지 셋에 대해서 정확도가 크게 떨어지지 않음.
+k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k Color Quantization, Resized된 이미지를 사용함.
+
+16, 8의 경우 새, 빈둥지 검출 능력이 좋아서 전체 Accuracy가 높게 나오는 경향이 있음.
+
+---
 
 ![accu8](readme_img/entire/Accuracy_8.png)
 ![accu8](readme_img/entire/Accuracy_16.png)
@@ -139,11 +153,13 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 ![accu8](readme_img/each/Accuracy_32.png)
 ![accu8](readme_img/each/Accuracy_256.png)
 
+---
 
+원본 이미지를 사용해서 Training 후 Validation을 Color Quantization, Resized된 이미지를 사용함.
 
-k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k Color Quantization, Resized된 이미지를 사용함.
+16, 8의 경우 결과가 잘 나오지않지만 resize된 이미지 셋에 대해서 정확도가 크게 떨어지지 않음.
 
-16, 8의 경우 새, 빈둥지 검출 능력이 좋아서 전체 Accuracy가 높게 나오는 경향이 있음.
+---
 
 ![accu8](readme_img/entire_raw/Accuracy_8.png)
 ![accu8](readme_img/entire_raw/Accuracy_16.png)
