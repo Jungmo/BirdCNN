@@ -1,6 +1,6 @@
 # BirdCNN
 
-* 딥러닝의 발전함에 따라 이미지 분류 도메인의 주도권은 고전적 머신 러닝 알고리즘 (SVM, Linear Classifier)에서 ConvNN으로 주도권이 넘어감.
+* 딥러닝의 발전함에 따라 이미지 분류 도메인의 주도권은 traditional 머신 러닝 알고리즘 (SVM, Linear Classifier)에서 ConvNN으로 주도권이 넘어감.
 * ConvNN을 실생활에 적용하기 위해서 의미있고 실용적인 이미지를 수집하는 것이 필요함
 * 이미지를 수집하는 것에는 Wireless Image Sensor Networks (WISN)가 하나의 해결책이 될 수 있음
 * 하지만 WISN 상에서 멀티미디어 데이터를 전송하는 것은 데이터소모가 크기 때문에 원본 이미지를 전송하는 것은 에너지 비효율적임
@@ -8,7 +8,10 @@
 * 중요한 Contribution은 WISN 상의 노드가 원본 이미지를 전송하지 않고 Quality를 감소시켜도 ConvNN 결과에 크게 영향을 미치지 않는 것을 보여주는 것
 * 전송량 측면에서 50% 이하로의 전송량 감소, 85% 이상 의 분류 정확도, ~%의 에너지 감소를 보임을 알아냄.
 
-# Motivation 
+# Motivation or Challenge
+
+이미지를 새, 새끼새, 알, 빈둥지로 클래스를 나눈다. 새의 종류 2개, 새끼새, 알, 빈둥지의 여려가지 이미지 첨부
+이 때 새의 종류가 2개 인 점, 새끼새의 경우 청소년새가 포함되어 있는 점, 알이 둥지 밑에 숨어있는 점 등을 제시한다. -> traditional ML알고리즘 사용이 힘든 이유
 
 # Image Preprocessing for reducing transmission amount
 임베디드 디바이스에서 쉽게 구현 및 적은 계산량, 적은 에너지 소모가 필수적이다.
@@ -32,7 +35,7 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     * Color Quantization 후 이미지의 사이즈(bytes) 계산 식 (log(2)(# of Colors) * # of pixel)
 [표] Compression ratio
 
-|너비|높이|8|16|32|256|
+|너비|높이|8 Colors|16 Colors|32 Colors|256 Colors|
 |---|---|---|---|---|---|
 |100|100|9%|13%|16%|25%|
 |110|110|11%|15%|19%|30%|
@@ -46,11 +49,37 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 |190|190|34%|45%|56%|90%|
 |200|200|38%|50%|63%|100%|
 
-# Image Classification
+# Image Classification Using ConvNN
+## Training model
+* 사용한 툴(Caffe), 사용한 모델(GoogleNet), 모델 파라미터??(Deep Learning을 중심적으로 발표하는 학회에서는 재현성을 위해 파라미터를 공개한다고 합니다. 근데 파라미터가 Optimal한 지에 대해 자신이 없네요.. 제 생각엔 Deep learning이 중심이 아닌 것 같아 자세하게 안해도 될 것 같습니다.)
+* Image Augmentation
+    * 새, 빈둥지의 사진은 상대적으로 많을 수 밖에 없다. 그래서 알, 새끼새의 경우 많은 Image Augmentation을 통해 이미지 bias를 해결한다.
+    * 새 사진도 2가자의 종(species) 중 Bluebird 이미지의 수가 2배 정도 적다.
+    * Bluebird -> 3배 (blur, filp)
+    * Swallow -> 2배 (filp)
+    * Egg -> 10배
+        * Crop(1,2,3,4사분면, 가운데를 150*150으로 자르고 200*200으로 리사이즈)
+        * Vertical, Horizontal, vertical&horizontal
+        * blur        
+    * Child -> 9배
+        * Crop(1,2,3,4사분면, 가운데를 150*150으로 자르고 200*200으로 리사이즈)
+        * Vertical, Horizontal, vertical&horizontal
 
-이미지를 새, 새끼새, 알, 빈둥지로 클래스를 나눈다. 새의 종류 2개, 새끼새, 알, 빈둥지의 여려가지 이미지 첨부
+[표] training 이미지 개수와 augmentation 후의 개수
 
-이 때 새의 종류가 2개 인 점, 새끼새의 경우 청소년새가 포함되어 있는 점, 알이 둥지 밑에 숨어있는 점 등을 제시한다.
+**Image Augmentation 후 8, 16 Color의 경우 Accuracy가 상승했지만 256, 32의 경우에는 Accuracy가 크게 떨어졌습니다. 이 두 경우에 Augmentation을 하지 않고 한 것이 결과가 좋게나왔다는 것과 두 경우에 추후에 Evaluation 결과를 작성할 때 Augmentaion을 하지 않은 모델을 사용했다는 것을 명시하는게 좋을까요? '이 두 경우는 Augmentation안하는게 좋아.' 라고 말하는게 마음에 안들어서요.**
 
+# Evaluation
+1. 전송량 대비 Image Classification Accuracy
+    * [표] Confusion Matrix
+    * [그래프] Class 별 Accuracy
+2. 전송량 대비 Image Distortion Metric (SSIM, PSNR, MSE)
+    * [그래프]
+3. Energy Consumption
+    * Resize(150, 140, 130, 120, 110, 100)
+    * Color Quantization(8, 16, 32 Colors)
+    * Transmission
+    * [표]
 
-
+# Related work
+# conclustion
