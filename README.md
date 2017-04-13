@@ -87,7 +87,8 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     ![color32](readme_img/32color2.png)
     * 분류 정확도를 떨어뜨리는 요인 중 하나는 청소년새들!
     * 아직 명확화하지는 않았지만 시계열 정보를 사용하면 더 좋아질 수 있다고 생각합니다.. 전개내용이 약하면 추가하는 것이 맞다고 생각합니다.
-
+    * 또는 '청소년새' 클래스를 하나 더 만드는 방법도 있는데 어디부터가 청소년인지 정하기가 애매해서 못했습니다. 이 경우 확실히 전체 정확도가 올라갈 것입니다.
+    
 참고사항) Child Class
 
 ![child1](readme_img/child1.bmp)
