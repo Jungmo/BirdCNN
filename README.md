@@ -157,7 +157,9 @@ k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k C
 
 원본 이미지를 사용해서 Training 후 Validation을 Color Quantization, Resized된 이미지를 사용함.
 
-16, 8의 경우 결과가 잘 나오지않지만 resize된 이미지 셋에 대해서 정확도가 크게 떨어지지 않음.
+16, 8의 경우 결과가 잘 나오지않음
+
+256, 32의 경우 resize된 이미지 셋에 대해서 정확도가 높음. - 클래스별로 골고루 정확도가 높음
 
 ---
 
