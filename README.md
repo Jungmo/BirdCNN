@@ -11,8 +11,18 @@
 
 # Motivation or Challenge
 이미지셋 설명
+
+CNN을 사용한 이유
+
+* 새의 종(species)에 따른 어려움을 해결
+* 단채널 grayscale image에도 잘 동작한다는 점
+* Color histogram이 union distribution해도 잘 동작한다는 점
+
 이미지를 새, 새끼새, 알, 빈둥지로 클래스를 나눈다. 새의 종류 2개, 새끼새, 알, 빈둥지의 여려가지 이미지 첨부
-이 때 새의 종류가 2개 인 점, 새끼새의 경우 청소년새가 포함되어 있는 점, 알이 둥지 밑에 숨어있는 점 등을 제시한다. -> traditional ML알고리즘 사용 결과 좋지 않았던 것과 사용이 힘든 이유
+
+이 때 새의 종류가 2개 인 점, 새끼새의 경우 청소년새가 포함되어 있는 점, 알이 둥지 밑에 숨어있는 점 등을 제시한다.
+    
+    -> traditional ML알고리즘 사용 결과 좋지 않았던 것과 사용이 힘든 이유
 
 
 # Image Preprocessing for reducing transmission amount
@@ -20,11 +30,13 @@
 
 preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortion metric과 같이)
 
-* Previous Approach
-    * Find ROI and Crop
-        * 임베디드 디바이스가 ROI를 잘 찾아서 ROI만 전송할 수 있다면 Traditional Image classifier에서는 잘 동작할 수 있다. 하지만 ROI 검출은 SIFT, SURF 등의 복잡한 알고리즘이 필요하다. 또는 시계열 이미지에서 이전 이미지와 현재 이미지간의 차이를 통해 변화한 부분을 ROI로 사용하는 방법도 있다. 그러나 원본 이미지가 grayscale 단채널이어서 색상정보가 부족하다는 점, 그에 따른 Pixel histogram이 각 Class마다 차이가 많이 나지않아 classification accuracy가 상당히 낮게 나온다.
-        * ConvNN의 경우 학습된 데이터에 따라서 Validation이 진행되는데 학습시키는 과정에서 ROI를 추출해서 학습시키기가 어려운 점, ConvNN의 경우 완벽하게 잘리지 않은 이미지에 대해서 검출이 어려운 점 때문에 ROI Crop 방법은 적절하지 않다. 그래서 이미지의 전체 크기를 줄이기로 함.
-        * 이 경우 픽셀정보는 바뀌겠지만 수정된 사진에 원본이미지의 내용이 모두 들어가게됨 - ConvNN에 적합
+## Previous Approach
+* Find ROI and Crop
+    * 임베디드 디바이스가 ROI를 잘 찾아서 ROI만 전송할 수 있다면 Traditional Image classifier에서는 잘 동작할 수 있다. 하지만 ROI 검출은 SIFT, SURF 등의 복잡한 알고리즘이 필요하다. 또는 시계열 이미지에서 이전 이미지와 현재 이미지간의 차이를 통해 변화한 부분을 ROI로 사용하는 방법도 있다. 그러나 원본 이미지가 grayscale 단채널이어서 색상정보가 부족하다는 점, 그에 따른 Pixel histogram이 각 Class마다 차이가 많이 나지않아 classification accuracy가 상당히 낮게 나온다.
+    * ConvNN의 경우 학습된 데이터에 따라서 Validation이 진행되는데 학습시키는 과정에서 ROI를 추출해서 학습시키기가 어려운 점, ConvNN의 경우 완벽하게 잘리지 않은 이미지에 대해서 검출이 어려운 점 때문에 ROI Crop 방법은 적절하지 않다. 그래서 이미지의 전체 크기를 줄이기로 함.
+    * 이 경우 픽셀정보는 바뀌겠지만 수정된 사진에 원본이미지의 내용이 모두 들어가게됨 - ConvNN에 적합
+
+## Approach
 * Image Scaling
     * Bilinear Image Scaling(이중선형 보간법)
         * Interpolation(인터폴레이션, 보간)이란 알려진 지점의 값 사이(중간)에 위치한 값을 알려진 값으로부터 추정하는 것을 말한다.
@@ -85,13 +97,13 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 
 [표] training 이미지 개수와 augmentation 후의 개수
 
-**Image Augmentation을 많이 한 경우에 8, 16 Color의 경우 Accuracy가 상승했지만 256, 32의 경우에는 Accuracy가 크게 떨어졌습니다. 또 Resize되었을 때 Accuracy가 크게 떨어집니다.**
+**Image Augmentation을 많이 한 경우에 8, 16 Color의 경우 Accuracy가 상승했지만 256, 32의 경우에는 Accuracy가 크게 떨어졌습니다.**
 
 ## 두 가지 경우에 대해서 Training을 해 봄.
 1. 원본 이미지를 사용해서 Training 후 Validation을 Color Quantization, Resized된 이미지를 사용함.(적은 Augmentation)
     * 256, 32의 경우 높은 Accuracy를 보이지만 16, 8에서 낮은 Accuracy를 보임
 2. k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k Color Quantization, Resized된 이미지를 사용함. (많은 Augmentaion)
-    * 각 경우에 따라 비슷한 Accuracy를 보이지만 Image resized된 Validation Set에 대해 Accuracy가 급격히 낮아짐. (Quantization 후 resize한 이미지를 Validation으로 사용해서 그럴 수도..?)
+    * 32, 256의 경우 빈둥지, 새끼새 검출 능력이 매우 좋지않아 전체 Accuracy가 낮게 나오는 경향이 있음.
 
 # Evaluation
 1. 전송량 대비 Image Classification Accuracy
@@ -101,7 +113,7 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     * 그래프 형식은 아래와 같이
     * 분류 정확도를 떨어뜨리는 요인 중 하나는 청소년새들!
     * 아직 명확화하지는 않았지만 시계열 정보를 사용하면 더 좋아질 수 있다고 생각합니다.. 전개내용이 약하면 추가하는 것이 맞다고 생각합니다.
-    * 또는 '청소년새' 클래스를 하나 더 만드는 방법도 있는데 어디부터가 청소년인지 정하기가 애매해서 못했습니다. 이 경우 확실히 전체 정확도가 올라갈 것입니다.
+    * 또는 '청소년새' 클래스를 하나 더 만드는 방법도 있는데 어디부터가 청소년인지 정하기가 애매해서 안했습니다. 이 경우 확실히 전체 정확도가 올라갈 것입니다.
 
 참고) Child Class
 
@@ -139,7 +151,9 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 
 k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k Color Quantization, Resized된 이미지를 사용함.
 
-16, 8의 경우 새, 빈둥지 검출 능력이 좋아서 전체 Accuracy가 높게 나오는 경향이 있음.
+32, 256의 경우 빈둥지, 새끼새 검출 능력이 매우 좋지않아 전체 Accuracy가 낮게 나오는 경향이 있음.
+
+전송량 대비 16 colors 200*200 의 경우가 가장 좋은 정확도 93%
 
 ---
 
@@ -159,7 +173,9 @@ k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k C
 
 16, 8의 경우 결과가 잘 나오지않음
 
-256, 32의 경우 resize된 이미지 셋에 대해서 정확도가 높음. - 클래스별로 골고루 정확도가 높음
+256, 32의 경우 정확도가 높음.
+
+전송량 대비 32 colors 150*150 의 경우가 가장 좋은 정확도 93%
 
 ---
 
