@@ -103,12 +103,13 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 
 위 3개의 이미지가 같은 클래스로 분류되어있음. -> '새' 클래스의 경우 완전한 성조가 있는 경우
 
-2. 전송량 대비 Image Distortion Metric (SSIM, PSNR, MSE)
+2. Image Distortion Metric (SSIM, PSNR, MSE)
     * 그래프 형식은 아래와 같이
 
     ![ssim](readme_img/ssim.png)
     ![psnr](readme_img/psnr.png)
     ![mse](readme_img/mse.png)
+실제 전송받은 사진을 가지고 다른 작업을 할 때 필요할 수 있음. (# of eggs, # of child bird..)
 
 3. Energy Consumption(내주 내로 측정예정)
     * Resize(150, 140, 130, 120, 110, 100)
