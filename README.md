@@ -4,9 +4,9 @@
 * ConvNN을 실생활에 적용하기 위해서 의미있고 실용적인 이미지를 수집하는 것이 필요함
 * 또 실제 모델을 Deploy하는 시나리오도 필요함
 * 이미지를 수집하는 것에는 Wireless Image Sensor Networks (WISN)가 하나의 해결책이 될 수 있음
-* 하지만 WISN 상에서 멀티미디어 데이터를 전송하는 것은 데이터소모가 크기 때문에 원본 이미지를 전송하는 것은 에너지 비효율적임
+* 하지만 WISN 상에서 멀티미디어 데이터를 전송하는 것은 전력소모가 크기 때문에 원본 이미지를 전송하는 것은 에너지 비효율적임
 * 이 문제를 해결하기위해 Image resize와 Color Quantization을 사용하려고 함.
-* 중요한 Contribution은 WISN 상의 노드가 원본 이미지를 전송하지 않고 Quality를 감소시켜도 ConvNN 결과에 크게 영향을 미치지 않고 충분하다는 것
+* WISN 상의 노드가 원본 이미지를 전송하지 않고 Image Quality를 감소시켜 전송량을 줄여도 ConvNN 결과에 크게 영향을 미치지 않고 충분하다는 것
 * 전송량 측면에서 50% 이하로의 전송량 감소, 최대 93% 이상 의 분류 정확도, ~%의 에너지 감소를 보임을 알아냄.
 
 # Motivation or Challenge
@@ -74,7 +74,7 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 
 [표] training 이미지 개수와 augmentation 후의 개수
 
-**Image Augmentation 후 8, 16 Color의 경우 Accuracy가 상승했지만 256, 32의 경우에는 Accuracy가 크게 떨어졌습니다. 이 두 경우에 Augmentation을 하지 않고 한 것이 결과가 좋게나왔다는 것과 두 경우에 추후에 Evaluation 결과를 작성할 때 Augmentaion을 하지 않은 모델을 사용했다는 것을 명시하는게 좋을까요? '이 두 경우는 Augmentation안하는게 좋아.' 라고 말하는게 마음에 안들어서요.**
+**Image Augmentation 후 8, 16 Color의 경우 Accuracy가 상승했지만 256, 32의 경우에는 Accuracy가 크게 떨어졌습니다. 이 두 경우(32, 256 colors)에  대해 Augmentation을 하지 않고 한 것이 결과가 좋게나왔다는 것과 두 경우에 추후에 Evaluation 결과를 작성할 때 Augmentaion을 하지 않은 모델을 사용했다는 것을 명시하는게 좋을까요? '이 두 경우는 Augmentation안하는게 좋아.' 라고 말하는게 조금 이상할 것 같습니다.**
 
 두 가지 경우에 대해서 Training을 해 봄.
 1. 원본 이미지를 사용해서 Training 후 Validation을 Color Quantization, Resized된 이미지를 사용함.
@@ -92,13 +92,13 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     * 아직 명확화하지는 않았지만 시계열 정보를 사용하면 더 좋아질 수 있다고 생각합니다.. 전개내용이 약하면 추가하는 것이 맞다고 생각합니다.
     * 또는 '청소년새' 클래스를 하나 더 만드는 방법도 있는데 어디부터가 청소년인지 정하기가 애매해서 못했습니다. 이 경우 확실히 전체 정확도가 올라갈 것입니다.
 
-참고사항) Child Class
+참고) Child Class
 
 ![child1](readme_img/child1.bmp)
 ![child2](readme_img/child2.bmp)
 ![child3](readme_img/child3.bmp)
 
-위 3개의 이미지가 같은 클래스로 분류되어있음. -> '새' 클래스의 경우 완전한 성조가 있는 경우
+위 3개의 이미지가 같은 클래스로 labeling 되어있음. -> '새' 클래스의 경우 완전한 성조가 있는 경우
 
 2. Image Distortion Metric (SSIM, PSNR, MSE)
 
