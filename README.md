@@ -35,7 +35,8 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 * Image Color Quantization
     * Color Quantization은 원본 이미지의 256색을 모두 사용하는 것이 아닌 일정 수의 표현 가능한 픽셀 수로 줄여서 사용하는 것이다.
     * Color Quantization의 방법에는 "straight-line distance", "nearest color" algorithm, K-means 방식 등이 있다.
-    * 원본 이미지로 Training한  Conv 모델을 사용할 경우에는 낮은 Distortion(SSIM, PSNR Metric 상)을 유발하는 Algorithm이 좋은 Accuracy result를 줄 수 있겠지만, Training도 Color Quantization한 이미지를 사용할 경우 낮은 Distortion이 크게 문제가 되지 않을 것이다. 또 여러번의 iteration을 거치는 것 또는 Pixel간의 euclidean distance 등을 계산하는 것이 아닌 정해진 Color pixel을 고정해서 Quantization을 수행함으로 더 적은 연산을 통해 Color Quantization을 할 수 있다.
+    * 낮은 Distortion(SSIM, PSNR Metric 상)을 유발하는 Algorithm이 좋은 Accuracy result를 줄 수 있겠지만 여러번의 iteration을 거치는 것 또는 Pixel간의 euclidean distance 등을 계산하는 복잡한 것이 아닌 정해진 Color pixel을 고정해서 Quantization을 수행함으로 더 적은 연산을 통해 Color Quantization을 할 수 있다. - time complexity : O(n^2) (n : length of width)
+   * Training도 Color Quantization한 이미지를 사용할 경우 낮은 Distortion이 크게 문제가 되지 않을 것이다.
     * 정해진 Color Pixel 구하는, 이미지에 Color Quantization 적용하는 psuedo code box (5~6줄 정도)
     * Color Quantization 후 이미지의 사이즈(bytes) 계산 식
         * log(2)(# of Colors) * # of pixel
