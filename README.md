@@ -105,6 +105,7 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     ![ssim](readme_img/ssim.png)
     ![psnr](readme_img/psnr.png)
     ![mse](readme_img/mse.png)
+    
 실제 전송받은 사진을 가지고 다른 작업을 할 때 필요할 수 있음. (# of eggs, # of child bird..)
 
 3. Energy Consumption(내주 내로 측정예정)
