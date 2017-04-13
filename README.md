@@ -33,7 +33,9 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     * Color Quantization의 방법에는 "straight-line distance", "nearest color" algorithm,[위키피디아] K-means[교수님 논문, Celebi, M. E. (2011). "Improving the performance of k-means for color quantization". Image and Vision Computing. 29 (4): 260–271. doi:10.1016/j.imavis.2010.10.002.] 방식 등이 있다.
     * 원본 이미지로 Training한  Conv 모델을 사용할 경우에는 낮은 Distortion(SSIM, PSNR Metric 상)을 유발하는 Algorithm이 좋은 Accuracy result를 줄 수 있겠지만, Training도 Color Quantization한 이미지를 사용할 경우 낮은 Distortion이 크게 문제가 되지 않을 것이다. 그래서 여러번의 iteration을 거치는 것 또는 Pixel간의 euclidean distance 등을 계산하는 것이 아닌 정해진 Color pixel을 고정해서 Quantization을 수행한다. 이로인해 더 적은 연산을 통해 Color Quantization을 할 수 있다.
     * 정해진 Color Pixel 구하는 psuedo code box
-    * Color Quantization 후 이미지의 사이즈(bytes) 계산 식 (log(2)(# of Colors) * # of pixel)
+    * Color Quantization 후 이미지의 사이즈(bytes) 계산 식
+        * log(2)(# of Colors) * # of pixel
+
 [표] Compression ratio
 
 |너비|높이|8 Colors|16 Colors|32 Colors|256 Colors|
@@ -59,11 +61,11 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     * Bluebird -> 3배 (blur, filp)
     * Swallow -> 2배 (filp)
     * Egg -> 10배
-        * Crop(1,2,3,4사분면, 가운데를 150*150으로 자르고 200*200으로 리사이즈)
+        * Crop(1,2,3,4사분면, 가운데를 150 * 150으로 자르고 200 * 200으로 리사이즈)
         * Vertical, Horizontal, vertical&horizontal
         * blur        
     * Child -> 9배
-        * Crop(1,2,3,4사분면, 가운데를 150*150으로 자르고 200*200으로 리사이즈)
+        * Crop(1,2,3,4사분면, 가운데를 150 * 150으로 자르고 200 * 200으로 리사이즈)
         * Vertical, Horizontal, vertical&horizontal
 
 [표] training 이미지 개수와 augmentation 후의 개수
@@ -74,11 +76,18 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 1. 전송량 대비 Image Classification Accuracy
     * [표] Confusion Matrix
     * [그래프] Class 별 Accuracy
+
+    ![color32](readme_img/32color.png)
+    ![color32](readme_img/32color2.png)
     * 분류 정확도를 떨어뜨리는 요인 중 하나는 청소년새들!
     * 아직 명확화하지는 않았지만 시계열 정보를 사용하면 더 좋아질 수 있다고 생각합니다.. 전개내용이 약하면 추가하는 것이 맞다고 생각합니다.
 2. 전송량 대비 Image Distortion Metric (SSIM, PSNR, MSE)
-    * [그래프]
-3. Energy Consumption
+
+    ![ssim](readme_img/ssim.png)
+    ![psnr](readme_img/psnr.png)
+    ![mse](readme_img/mse.png)
+
+3. Energy Consumption(내주 내로 측정예정)
     * Resize(150, 140, 130, 120, 110, 100)
     * Color Quantization(8, 16, 32 Colors)
     * Transmission
