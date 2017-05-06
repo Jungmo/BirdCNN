@@ -180,34 +180,15 @@ k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k C
 
 ---
 
-![accu8](readme_img/entire/Accuracy_8.png)
-![accu8](readme_img/entire/Accuracy_16.png)
-![accu8](readme_img/entire/Accuracy_32.png)
-![accu8](readme_img/entire/Accuracy_256.png)
+![accu8](readme_img/entire_new/Entire_Accuracy_8.png)
+![accu8](readme_img/entire_new/Entire_Accuracy_16.png)
+![accu8](readme_img/entire_new/Entire_Accuracy_32.png)
+![accu8](readme_img/entire_new/Entire_Accuracy_256.png)
 
-![accu8](readme_img/each/Accuracy_8.png)
-![accu8](readme_img/each/Accuracy_16.png)
-![accu8](readme_img/each/Accuracy_32.png)
-![accu8](readme_img/each/Accuracy_256.png)
-
----
-
-원본 이미지를 사용해서 Training 후 Validation을 Color Quantization, Resized된 이미지를 사용함.
-
-16, 8의 경우 결과가 잘 나오지않음
-
-256, 32의 경우 정확도가 높음.
-
-전송량 대비 32 colors 150*150 의 경우가 가장 좋은 정확도 93%
+![accu8](readme_img/each_new/Each_Accuracy_8.png)
+![accu8](readme_img/each_new/Each_Accuracy_16.png)
+![accu8](readme_img/each_new/Each_Accuracy_32.png)
+![accu8](readme_img/each_new/Each_Accuracy_256.png)
 
 ---
 
-![accu8](readme_img/entire_raw/Accuracy_8.png)
-![accu8](readme_img/entire_raw/Accuracy_16.png)
-![accu8](readme_img/entire_raw/Accuracy_32.png)
-![accu8](readme_img/entire_raw/Accuracy_256.png)
-
-![accu8](readme_img/each_raw/Accuracy_8.png)
-![accu8](readme_img/each_raw/Accuracy_16.png)
-![accu8](readme_img/each_raw/Accuracy_32.png)
-![accu8](readme_img/each_raw/Accuracy_256.png)
