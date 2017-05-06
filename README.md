@@ -16,7 +16,7 @@ CNN을 사용한 이유
 
 * 새의 종(species)에 따른 어려움을 해결
 * 단채널 grayscale image에도 잘 동작한다는 점
-* Color histogram이 union distribution해도 잘 동작한다는 점
+* Color histogram이 uniform distribution해도 잘 동작한다는 점
 
 이미지를 새, 새끼새, 알, 빈둥지로 클래스를 나눈다. 새의 종류 2개, 새끼새, 알, 빈둥지의 여려가지 이미지 첨부
 
@@ -47,7 +47,9 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 * Image Color Quantization
     * Color Quantization은 원본 이미지의 256색을 모두 사용하는 것이 아닌 일정 수의 표현 가능한 픽셀 수로 줄여서 사용하는 것이다.
     * Color Quantization의 방법에는 "straight-line distance", "nearest color" algorithm, K-means 방식 등이 있다.
-    * 낮은 Distortion(SSIM, PSNR Metric 상)을 유발하는 Algorithm이 좋은 Accuracy result를 줄 수 있겠지만 여러번의 iteration을 거치는 것 또는 Pixel간의 euclidean distance 등을 계산하는 복잡한 것이 아닌 정해진 Color pixel을 고정해서 Quantization을 수행함으로 더 적은 연산을 통해 Color Quantization을 할 수 있다. - time complexity : O(n^2) (n : length of width)
+    * 낮은 Distortion(SSIM, PSNR Metric 상)을 유발하는 Algorithm이 좋은 Accuracy result를 줄 수 있겠지만 여러번의 iteration을 거치는 것 또는 Pixel간의 euclidean distance 등을 계산하는 복잡한 것이 아닌 정해진 Color pixel을 고정해서 Quantization을 수행함으로 더 적은 연산을 통해 Color Quantization을 할 수 있다. 
+ 
+ - time complexity : O(n^2) (n : length of width)
     * Training도 Color Quantization한 이미지를 사용할 경우 낮은 Distortion이 크게 문제가 되지 않을 것이다.
     * 정해진 Color Pixel 구하는, 이미지에 Color Quantization 적용하는 psuedo code box (5~6줄 정도)
     * Color Quantization 후 이미지의 사이즈(bytes) 계산 식
@@ -135,7 +137,28 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     * Resize(150, 140, 130, 120, 110, 100)
     * Color Quantization(8, 16, 32 Colors)
     * Transmission
-    * [표]
+
+[표] Resize Energy Consumption
+
+|Resolution|Average Running Time(s)|Est. energy usage (mJ)|
+|---|---|---|
+|200 to 100|0.68|21|
+|200 to 110|0.88|27|
+|200 to 120|1.0|33|
+|200 to 130|1.26|40|
+|200 to 140|1.46|46|
+|200 to 150|1.67|53|
+
+[표] Color Quantization
+
+**컬러 개수와 상관없이 동일한 전력소비를 보임**
+
+|Average Running Time(ms)|Est. energy usage (mJ)|
+|---|---|
+|1|0.019|
+
+[표] Transmit Raw Image(Idle - 3mA, Radio_ON - 12mA)
+|Average Running Time(ms)|Est. energy usage (mJ)|
 
 # Related work
 
