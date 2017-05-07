@@ -7,7 +7,9 @@
 * 하지만 WISN 상에서 멀티미디어 데이터를 전송하는 것은 전력소모가 크기 때문에 원본 이미지를 전송하는 것은 에너지 비효율적임
 * 이 문제를 해결하기위해 Image resize와 Color Quantization을 사용하려고 함.
 * WISN 상의 노드가 원본 이미지를 전송하지 않고 Image Quality를 감소시켜 전송량을 줄여도 ConvNN 결과에 크게 영향을 미치지 않고 충분하다는 것
-* 전송량 측면에서 50% 이하로의 전송량 감소, 최대 93% 이상 의 분류 정확도, ~%의 에너지 감소를 보임을 알아냄.
+* 전송량 측면에서 50% 이하로의 전송량 감소 시 96% 이상의 분류 정확도, ~%의 에너지 감소를 보임을 알아냄.
+
+**모니터링, 분류하기 위해서 CNN을 사용할 때, Training이나 Prediction과정에서 이미징 센서를 부착한 노드가 굳이 RAW이미지를 보내지 않아도 Classification Accuracy에 크게 문제가 되지 않는다는 것, 적당한 이미지 프로세싱을 통해서 에너지 소비량이 훨씬 적어진다는 것.**
 
 # Motivation or Challenge
 이미지셋 설명
@@ -24,6 +26,7 @@ CNN을 사용한 이유
     
     -> traditional ML알고리즘 사용 결과 좋지 않았던 것과 사용이 힘든 이유
 
+Data Driven으로 해결함. 선행연구[Ko et al., "Heartbeat of Bird Nest"] 기준 모든 면에서 Accuracy 증가.
 
 # Image Preprocessing for reducing transmission amount
 임베디드 디바이스에서 쉽게 구현 및 적은 계산량, 적은 에너지 소모가 필수적이다.
@@ -44,16 +47,44 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
             * 출처 : http://tech-algorithm.com/articles/bilinear-image-scaling/
         * 출처에 있는 내용들 조금 이야기
         * 간단한 Psuedo code box 필요할지 모르겠지만 10~14줄 정도
+
 * Image Color Quantization
     * Color Quantization은 원본 이미지의 256색을 모두 사용하는 것이 아닌 일정 수의 표현 가능한 픽셀 수로 줄여서 사용하는 것이다.
     * Color Quantization의 방법에는 "straight-line distance", "nearest color" algorithm, K-means 방식 등이 있다.
-    * 낮은 Distortion(SSIM, PSNR Metric 상)을 유발하는 Algorithm이 좋은 Accuracy result를 줄 수 있겠지만 여러번의 iteration을 거치는 것 또는 Pixel간의 euclidean distance 등을 계산하는 복잡한 것이 아닌 정해진 Color pixel을 고정해서 Quantization을 수행함으로 더 적은 연산을 통해 Color Quantization을 할 수 있다. 
- 
- - time complexity : O(n^2) (n : length of width)
-    * Training도 Color Quantization한 이미지를 사용할 경우 낮은 Distortion이 크게 문제가 되지 않을 것이다.
-    * 정해진 Color Pixel 구하는, 이미지에 Color Quantization 적용하는 psuedo code box (5~6줄 정도)
-    * Color Quantization 후 이미지의 사이즈(bytes) 계산 식
-        * log(2)(# of Colors) * # of pixel
+        * Time complexity, Space Complexity가 높다.
+        * 낮은 Distortion(SSIM, PSNR Metric 상)을 유발하는 Algorithm이 좋은 Accuracy result를 줄 수 있겠지만 여러번의 iteration을 거치는 것 또는 Pixel간의 euclidean distance 등을 계산하는 복잡한 것이 아닌 **정해진 Color pixel을 고정해서 Quantization을 수행함으로 더 적은 연산을 통해 Color Quantization을 할 수 있다.**
+
+    * time complexity : O(n^2) (n : length of width)
+        * Training도 Color Quantization한 이미지를 사용할 경우 낮은 Distortion이 크게 문제가 되지 않을 것이다.
+        * Color Quantization 후 이미지의 사이즈(bytes) 계산 식
+            * log(2)(# of Colors) * # of pixel
+        * 정해진 Color Pixel 구하는, 이미지에 Color Quantization 적용하는 psuedo code box
+```C
+unsigned char get_nearest_centroid(unsigned char pixel) //O(1)
+{
+
+        unsigned char div = 256 >> logK;
+        unsigned char sub = 2 << ((8-logK-1)) -1;
+        unsigned char ret = (pixel - sub) / div;
+
+        if((pixel-sub)%div > sub+1)
+        {
+                ret = ret + 1;
+        }
+        return ret;
+}
+
+//header size = 1078
+void drop_image_quality(unsigned char image[41078]) //O(n^2), n is Width of an image
+{
+        int i;
+        for(i = 1078; i < WIDTH_SQUARE+1078; i++)
+        {
+                printf("%d ", get_nearest_centroid(image[i]));
+        }
+
+}
+```    
 
 [표] Compression ratio
 
@@ -76,36 +107,37 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 ## Training model
 
 * 사용한 툴(Caffe), 사용한 모델(GoogleNet), 모델 파라미터??(Deep Learning을 중심적으로하는 학회에서는 재현성을 위해 파라미터를 공개한다고 합니다. 근데 파라미터가 Optimal한 지에 대해 자신이 없네요.. 제 생각엔 새로운 Deep learning 알고리즘이 중심이 아닌 것 같아 자세하게 안해도 될 것 같습니다.)
+
 ### Image Augmentation
-* 새, 빈둥지의 사진은 상대적으로 많을 수 밖에 없다. 그래서 알, 새끼새의 경우 많은 Image Augmentation을 통해 이미지 bias를 해결한다.
-* 새 사진도 2가자의 종(species) 중 Bluebird 이미지의 수가 2배 정도 적다.
-* Image Augmentation을 많이 한 경우
-    * Bluebird -> 3배 (blur, filp)
-    * Swallow -> 2배 (filp)
-    * Egg -> 10배
+* 새, 빈둥지의 사진은 상대적으로 많을 수 밖에 없다. 그래서 알, 새끼새의 경우 많은 Image Augmentation을 통해 Class bias를 해결한다.
+* 새 사진도 2가지의 종(species) 중 Bluebird 이미지의 수가 2배 정도 적다.
+* Image Augmentation
+    * Bluebird -> 2배 (vertical&horizontal flip)
+    * Swallow -> 2배 (vertical&horizontal flip)
+    * Egg -> 9배
         * Crop(1,2,3,4사분면, 가운데를 150 * 150으로 자르고 200 * 200으로 리사이즈)
-        * Vertical, Horizontal, vertical&horizontal
-        * blur        
+        * Vertical, Horizontal, vertical&horizontal flip
     * Child -> 9배
         * Crop(1,2,3,4사분면, 가운데를 150 * 150으로 자르고 200 * 200으로 리사이즈)
-        * Vertical, Horizontal, vertical&horizontal
-* Image Augmentation을 적게 한 경우
-    * Bluebird -> 2배 (filp)
-    * Swallow -> 1배
-    * Egg -> 4배
-        * Vertical, Horizontal, vertical&horizontal        
-    * Child -> 4배
-        * Vertical, Horizontal, vertical&horizontal
+        * Vertical, Horizontal, vertical&horizontal flip
+    * Empty -> No Augmentation
 
 [표] training 이미지 개수와 augmentation 후의 개수
 
-**Image Augmentation을 많이 한 경우에 8, 16 Color의 경우 Accuracy가 상승했지만 256, 32의 경우에는 Accuracy가 크게 떨어졌습니다.**
+|Class|# of orinal images|# of augmented images|
+|---|---|---|
+|Bird|8606|17212|
+|Child|1841|16569|
+|Egg|1036|9324|
+|Empty|6977|Not applied|
+|Total|18460|50082|
 
-## 두 가지 경우에 대해서 Training을 해 봄.
-1. 원본 이미지를 사용해서 Training 후 Validation을 Color Quantization, Resized된 이미지를 사용함.(적은 Augmentation)
-    * 256, 32의 경우 높은 Accuracy를 보이지만 16, 8에서 낮은 Accuracy를 보임
-2. k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k Color Quantization, Resized된 이미지를 사용함. (많은 Augmentaion)
-    * 32, 256의 경우 빈둥지, 새끼새 검출 능력이 매우 좋지않아 전체 Accuracy가 낮게 나오는 경향이 있음.
+## Training
+K Color Quantization된 이미지를 사용해서 Training 후 Validation을 K Color Quantization, Resized된 이미지를 사용함.
+* Training Data를 모으는 과정에서도 에너지 소비를 줄일 수 있음.
+* Labeling은 사람이 해야하므로 양질의 Data Labeling을 위해서 PSNR, SSIM, MSE가 여기서도 중요하다.
+    * 원본 이미지도 사람이 구별하기 힘든 경우가 있음.
+    * 구별 어려운 사진 예시와 그들의 PSNR, SSIM, MSE를 보여주는 것도??
 
 # Evaluation
 1. 전송량 대비 Image Classification Accuracy
@@ -113,9 +145,12 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
     * [표] Confusion Matrix
     * [그래프] Class 별 Accuracy
     * 그래프 형식은 아래와 같이
-    * 분류 정확도를 떨어뜨리는 요인 중 하나는 청소년새들!
-    * 아직 명확화하지는 않았지만 시계열 정보를 사용하면 더 좋아질 수 있다고 생각합니다.. 전개내용이 약하면 추가하는 것이 맞다고 생각합니다.
-    * 또는 '청소년새' 클래스를 하나 더 만드는 방법도 있는데 어디부터가 청소년인지 정하기가 애매해서 안했습니다. 이 경우 확실히 전체 정확도가 올라갈 것입니다.
+    * ~~분류 정확도를 떨어뜨리는 요인 중 하나는 청소년새들!~~
+        * **Data Driven(Augmentation)으로 해결함.**
+        * 청소년 새들을 제외하고 기존 방법으로 Training을 해봤는데 효과는 있었으나 별로 크지않았습니다.
+    * ~~아직 명확화하지는 않았지만 시계열 정보를 사용하면 더 좋아질 수 있다고 생각합니다.. 전개내용이 약하면 추가하는 것이 맞다고 생각합니다.~~
+        * 이미 충분히 높은 Accuracy가 나온다고 생각합니다. 시계열 정보는 Image Labeling때 소모시간을 줄일 수 있을 것 같습니다.
+        * 앞 뒤 사진의 SSIM이 일정 Threshold를 넘으면 같은 Class 같은 느낌으로 쓸 수 있지 않을까 생각합니다.
 
 참고) Child Class
 
@@ -124,6 +159,23 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 ![child3](readme_img/child3.bmp)
 
 위 3개의 이미지가 같은 클래스로 labeling 되어있음. -> '새' 클래스의 경우 완전한 성조가 있는 경우
+
+Classification Result
+
+이전 결과에 비해 높은 정화도를 보이는 이유는 기존에 제가 Training set과 Test set의 차이를 거의 1:1로 사용하고 있었습니다.
+보다 좋은 Training을 위해 Training Set 개수를 늘렸습니다. 
+
+![accu8](readme_img/entire_new/Entire_Accuracy_8.png)
+![accu8](readme_img/entire_new/Entire_Accuracy_16.png)
+![accu8](readme_img/entire_new/Entire_Accuracy_32.png)
+![accu8](readme_img/entire_new/Entire_Accuracy_256.png)
+
+![accu8](readme_img/each_new/Each_Accuracy_8.png)
+![accu8](readme_img/each_new/Each_Accuracy_16.png)
+![accu8](readme_img/each_new/Each_Accuracy_32.png)
+![accu8](readme_img/each_new/Each_Accuracy_256.png)
+
+---
 
 2. Image Distortion Metric (SSIM, PSNR, MSE)
 
@@ -164,31 +216,4 @@ preprocessing 된 이미지 몇개 예시(SSIM, PSNR, MSE 등의 Image distortio
 
 # conclusion
 
-
-
-
-
-# Classification Result
-
----
-
-k Color Quantization된 이미지를 사용해서 Training 후 Validation을 k Color Quantization, Resized된 이미지를 사용함.
-
-32, 256의 경우 빈둥지, 새끼새 검출 능력이 매우 좋지않아 전체 Accuracy가 낮게 나오는 경향이 있음.
-
-전송량 대비 16 colors 200*200 의 경우가 가장 좋은 정확도 93%
-
----
-
-![accu8](readme_img/entire_new/Entire_Accuracy_8.png)
-![accu8](readme_img/entire_new/Entire_Accuracy_16.png)
-![accu8](readme_img/entire_new/Entire_Accuracy_32.png)
-![accu8](readme_img/entire_new/Entire_Accuracy_256.png)
-
-![accu8](readme_img/each_new/Each_Accuracy_8.png)
-![accu8](readme_img/each_new/Each_Accuracy_16.png)
-![accu8](readme_img/each_new/Each_Accuracy_32.png)
-![accu8](readme_img/each_new/Each_Accuracy_256.png)
-
----
 

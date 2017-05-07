@@ -5,6 +5,7 @@
 
 답변 1)
 모니터링, 분류하기 위해서 CNN을 사용할 때, Training이나 Prediction과정에서 이미징 센서를 부착한 노드가 굳이 RAW이미지를 보내지 않아도 Classification Accuracy에 크게 문제가 되지 않는다는 것, 적당한 이미지 프로세싱을 통해서 에너지 소비량이 훨씬 적어진다는 것을 보여주고 싶었습니다.
+또, 실험결과 Raw Image를 사용하는 것보다 processing 후 결과가 더 좋았습니다.
 
 2) 미안합니다, union distribution이 뭔지 제가 잘 몰라서...
 
@@ -23,7 +24,7 @@
      전체 dataset을 가지고 training과 validation을 한 경우를 비교해 보면
      예외 상황으로 인한 정확도 감소가 어느정도인지 감을 잡을 수 있을 것 같은데....
 
-답변 4) 이 경우에 대해서 최대한 빨리 Model training 해보고 말씀드리겠습니다.
+답변 4) 교수님의 말씀대로 진행해보았는데 큰 차이가 없었습니다.
 
 5) color quantization을 세가지 방식을 사용할 수 있다고 하셨는데, 결국 어떤 한가지로 결정을 하신건가요?
      ("straight-line distance", "nearest color" algorithm, K-means )
@@ -66,7 +67,7 @@ void drop_image_quality(unsigned char image[41078])
      - blur는 어느정도 한건가요?
      - filp는... flip을 말하는 거죠?
 
-답변 6) 모두 맞습니다. blur는 7x7 Gaussian Blur를 한번 사용했습니다.
+답변 6) 모두 맞습니다. blur는 7x7 Gaussian Blur를 한번 사용했습니다. **Update된 결과에서는 Blur를 사용하지 않았습니다.**
 
 7) "전송량 대비 정확도"라는 표현을 했는데, 계산을 어떻게 한거죠? 정확도% 나누기 전송량%?
       하나의 새로운 metric 형태로 만들어도 나쁘지 않겠네요.
