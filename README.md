@@ -206,7 +206,8 @@ Classification Result
 |---|---|
 |1|0.019|
 
-[표] Transmit Raw Image(Idle - 3mA, Radio_ON - 12mA)
+[표] Transmit Raw Image(Idle - 3mA, Radio_ON - 12mA) - 측정중..
+
 |Average Running Time(ms)|Est. energy usage (mJ)|
 
 # Related work
