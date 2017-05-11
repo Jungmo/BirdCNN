@@ -137,7 +137,7 @@ K Color Quantization된 이미지를 사용해서 Training 후 Validation을 K C
 * Training Data를 모으는 과정에서도 에너지 소비를 줄일 수 있음.
 * Labeling은 사람이 해야하므로 양질의 Data Labeling을 위해서 PSNR, SSIM, MSE가 여기서도 중요하다.
     * 원본 이미지도 사람이 구별하기 힘든 경우가 있음.
-    * 구별 어려운 사진 예시와 그들의 PSNR, SSIM, MSE를 보여주는 것도??
+    * 구별 어려운 사진 예시
 
 # Evaluation
 1. 전송량 대비 Image Classification Accuracy
@@ -148,9 +148,6 @@ K Color Quantization된 이미지를 사용해서 Training 후 Validation을 K C
     * ~~분류 정확도를 떨어뜨리는 요인 중 하나는 청소년새들!~~
         * **Data Driven(Augmentation)으로 해결함.**
         * 청소년 새들을 제외하고 기존 방법으로 Training을 해봤는데 효과는 있었으나 별로 크지않았습니다.
-    * ~~아직 명확화하지는 않았지만 시계열 정보를 사용하면 더 좋아질 수 있다고 생각합니다.. 전개내용이 약하면 추가하는 것이 맞다고 생각합니다.~~
-        * 이미 충분히 높은 Accuracy가 나온다고 생각합니다. 시계열 정보는 Image Labeling때 소모시간을 줄일 수 있을 것 같습니다.
-        * 앞 뒤 사진의 SSIM이 일정 Threshold를 넘으면 같은 Class 같은 느낌으로 쓸 수 있지 않을까 생각합니다.
 
 참고) Child Class
 
