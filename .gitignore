@@ -108,3 +108,5 @@ bird_no_adole
 caffe/model
 caffe/db
 *.tar
+a.out
+
