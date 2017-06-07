@@ -1,0 +1,6 @@
+[submodule "caffe/model_prototxt/MobileNets"]
+	path = caffe/model_prototxt/MobileNets
+	url = git@github.com:Jungmo/MobileNets.git
+[submodule "BirdNotebook"]
+	path = BirdNotebook
+	url = https://github.com/Jungmo/BirdNotebook

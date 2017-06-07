@@ -1,0 +1,17 @@
+net: "/home/jungmo/Documents/autonomous/caffe/model/resnet/train_val.prototxt"
+test_iter: 100
+test_interval: 100
+test_initialization: false
+display: 100
+average_loss: 100
+base_lr: 0.01
+lr_policy: "poly"
+power: 1
+stepsize: 10000
+gamma: 0.96
+max_iter: 50000
+momentum: 0.9
+weight_decay: 0.0001
+snapshot: 5000
+snapshot_prefix: "resnet_152"
+solver_mode: GPU

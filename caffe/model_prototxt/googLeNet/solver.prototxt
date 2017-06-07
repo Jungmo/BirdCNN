@@ -1,0 +1,17 @@
+net: "/home/jungmo/Documents/bird/caffe/model_prototxt/googLeNet/train_val.prototxt"
+test_iter: 500
+test_interval: 500
+test_initialization: false
+display: 100
+average_loss: 100
+base_lr: 0.01
+lr_policy: "poly"
+power: 1
+stepsize: 10000
+gamma: 0.96
+max_iter: 100000
+momentum: 0.9
+weight_decay: 0.0002
+snapshot: 5000
+snapshot_prefix: "googlenet"
+solver_mode: GPU
